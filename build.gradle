@@ -1,0 +1,129 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sponge"
+            url = "https://repo.spongepowered.org/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        //classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+    }
+}
+
+apply plugin: "forge"
+//apply plugin: "org.spongepowered.mixin"
+
+version = "ALPHA-2"
+group = "io.github.zekerzhayard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = rootProject.name
+
+configurations {
+    provided {
+        compile.extendsFrom provided
+    }
+}
+
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    mappings = "stable_12"
+    runDir = "run"
+
+    replace "@VERSION@", project.version
+    replace "@MODID@", project.name
+}
+
+//mixin {
+//    add sourceSets.main, "mixins.${rootProject.name.toLowerCase(Locale.ENGLISH)}.refmap.json"
+//}
+
+repositories {
+    maven {
+        name = "sponge"
+        url = "https://repo.spongepowered.org/maven"
+    }
+}
+
+dependencies {
+    // you may put jars on which you depend on in ./libs
+    // or you may define them like so..
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
+      
+    // real examples
+    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // for more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    compile "com.mojang:authlib:1.5.21"
+
+    provided "org.spongepowered:mixin:0.7.11-SNAPSHOT", {
+        transitive = false
+    }
+}
+
+def refMap = "${tasks.compileJava.temporaryDir}" + File.separator + "mixins.${rootProject.name.toLowerCase(Locale.ENGLISH)}.refmap.json"
+
+jar {
+    from configurations.provided.asFileTree.files.collect {
+        zipTree(it)
+    }
+    from refMap
+
+    exclude "LICENSE.txt"
+    exclude "META-INF/*.RSA"
+    exclude "META-INF/*.SF"
+
+    manifest.attributes([
+            "FMLCorePlugin": "${project.group}.${rootProject.name.toLowerCase(Locale.ENGLISH)}.asm.FMLLoadingPlugin",
+            "FMLCorePluginContainsFMLMod": "true",
+            "ForceLoadAsMod": "true",
+            "MixinConfigs": "mixins.${rootProject.name.toLowerCase(Locale.ENGLISH)}.json",
+            "ModSide": "CLIENT",
+            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker"
+    ])
+}
+
+def mixinSrg = "${tasks.reobf.temporaryDir}" + File.separator + "mixins.srg"
+afterEvaluate {
+    tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AoutSrgFile=${mixinSrg}", "-AoutRefMapFile=${refMap}"]
+}
+
+reobf {
+    addExtraSrgFile mixinSrg
+    reobf (jar) { reobfSpec ->
+        reobfSpec.classpath = sourceSets.main.compileClasspath
+    }
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+

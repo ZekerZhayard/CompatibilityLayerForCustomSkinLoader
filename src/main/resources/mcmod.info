@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "CompatibilityLayerForCustomSkinLoader",
+    "name": "CompatibilityLayerForCustomSkinLoader",
+    "description": "To make Custom Skin Loader can be loaded in Minecraft 1.7.10.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/compatibilitylayerforcustomskinloader",
+    "updateUrl": "",
+    "authorList": ["ZekerZhayard"],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": ["customskinloader"]
+  }
+]
