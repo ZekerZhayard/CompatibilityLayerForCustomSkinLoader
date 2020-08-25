@@ -19,6 +19,9 @@ public class ModelPlayer extends ModelBiped
     {
         super(modelSize, 0.0F, 64, 64);
         this.field_178735_y = smallArmsIn;
+        this.bipedCloak = new ModelRenderer(this, 0, 0);
+        this.bipedCloak.setTextureSize(64, 32);
+        this.bipedCloak.addBox(-5.0F, 0.0F, -1.0F, 10, 16, 1, modelSize);
 
         if (smallArmsIn)
         {

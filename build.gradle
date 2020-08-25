@@ -19,7 +19,7 @@ buildscript {
 apply plugin: "forge"
 //apply plugin: "org.spongepowered.mixin"
 
-version = "ALPHA-2"
+version = "ALPHA-3"
 group = "io.github.zekerzhayard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = rootProject.name
 
