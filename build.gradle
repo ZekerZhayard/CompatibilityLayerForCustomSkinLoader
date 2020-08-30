@@ -19,7 +19,7 @@ buildscript {
 apply plugin: "forge"
 //apply plugin: "org.spongepowered.mixin"
 
-version = "ALPHA-3"
+version = "ALPHA-4"
 group = "io.github.zekerzhayard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = rootProject.name
 
@@ -68,6 +68,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     compile "com.mojang:authlib:1.5.21"
+    compile fileTree(dir: "libs", include: ["*.jar"])
 
     provided "org.spongepowered:mixin:0.7.11-SNAPSHOT", {
         transitive = false
