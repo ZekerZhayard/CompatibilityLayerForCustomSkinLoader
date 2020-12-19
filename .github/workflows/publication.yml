@@ -1,0 +1,29 @@
+name: Publication
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '8u275'
+          architecture: x64
+      - name: Build with Gradle
+        run: ./gradlew.bat build -iS
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: build/libs
+      - name: Publish to CurseForge
+        env:
+          IS_PUBLICATION: true
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+        run: ./gradlew.bat curseforge -iS

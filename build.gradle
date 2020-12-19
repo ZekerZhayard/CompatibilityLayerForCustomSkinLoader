@@ -9,19 +9,34 @@ buildscript {
             name = "sponge"
             url = "https://repo.spongepowered.org/maven"
         }
+        maven {
+            name = "gradle"
+            url = "https://plugins.gradle.org/m2"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.4.0"
         //classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
     }
 }
 
 apply plugin: "forge"
+apply plugin: "com.matthewprenger.cursegradle"
 //apply plugin: "org.spongepowered.mixin"
 
-version = "ALPHA-5"
+version = "${mod_version}${-> getVersionSuffix()}"
 group = "io.github.zekerzhayard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = rootProject.name
+
+static String getVersionSuffix() {
+    if (System.getenv("IS_PUBLICATION") != null) {
+        return ""
+    } else if (System.getenv("GITHUB_RUN_NUMBER") != null && System.getenv("GITHUB_SHA") != null) {
+        return "-build." + System.getenv("GITHUB_RUN_NUMBER") + "-" + System.getenv("GITHUB_SHA").substring(0, 7)
+    }
+    return "-LOCAL"
+}
 
 configurations {
     provided {
@@ -151,3 +166,19 @@ processResources {
     }
 }
 
+def apiKey = System.getenv("CURSEFORGE_API_KEY")
+
+if (apiKey != null) {
+    curseforge {
+        curseforge.apiKey = apiKey
+        project {
+            id = "404263"
+            releaseType = "alpha"
+            mainArtifact jar, {
+                displayName = "${archivesBaseName}-${version}"
+            }
+            addGameVersion "1.7.10"
+            addGameVersion "Forge"
+        }
+    }
+}
