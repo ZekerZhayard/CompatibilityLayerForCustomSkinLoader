@@ -6,7 +6,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
@@ -14,6 +16,7 @@ import customskinloader.forge.platform.DefaultFMLPlatform;
 import customskinloader.forge.platform.IFMLPlatform;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.ForgePlugin;
 import net.minecraft.launchwrapper.ITweaker;
+import org.objectweb.asm.commons.Remapper;
 
 public class FMLLegacyPlatform extends DefaultFMLPlatform {
     private final static String FML_PLUGIN_WRAPPER = "cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper";
@@ -46,6 +49,16 @@ public class FMLLegacyPlatform extends DefaultFMLPlatform {
         Field field = CoreModManager.class.getDeclaredField("loadPlugins");
         field.setAccessible(true);
         ((List<ITweaker>) field.get(null)).add(tweaker);
+    }
+
+    @Override
+    public Remapper getRemapper() {
+        return new Supplier<Remapper>() {
+            @Override
+            public Remapper get() {
+                return FMLDeobfuscatingRemapper.INSTANCE;
+            }
+        }.get();
     }
 
     @Override

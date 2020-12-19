@@ -19,7 +19,7 @@ buildscript {
 apply plugin: "forge"
 //apply plugin: "org.spongepowered.mixin"
 
-version = "ALPHA-4"
+version = "ALPHA-5"
 group = "io.github.zekerzhayard" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = rootProject.name
 
@@ -52,6 +52,16 @@ repositories {
         name = "sponge"
         url = "https://repo.spongepowered.org/maven"
     }
+    maven {
+        name = "cursemaven"
+        url = "https://www.cursemaven.com"
+    }
+    ivy {
+        layout "pattern", {
+            artifact "[organisation]/[artifact]-[revision](.[ext])"
+        }
+        url = "https://csl.littleservice.cn/"
+    }
 }
 
 dependencies {
@@ -68,8 +78,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     compile "com.mojang:authlib:1.5.21"
-    compile fileTree(dir: "libs", include: ["*.jar"])
+    compile "mods:CustomSkinLoader_Forge:14.13-SNAPSHOT-203"
 
+    provided "curse.maven:render-player-api-228981:2248933"
     provided "org.spongepowered:mixin:0.7.11-SNAPSHOT", {
         transitive = false
     }
@@ -83,11 +94,23 @@ jar {
     }
     from refMap
 
-    exclude "LICENSE.txt"
+    exclude {
+        it.path.startsWith("api/player/") && !it.path.equals("api/player/model/ModelPlayer.class")
+    }
+    exclude {
+        it.path.toString().toUpperCase Locale.ENGLISH startsWith "LICENSE"
+    }
     exclude "META-INF/*.RSA"
     exclude "META-INF/*.SF"
 
     manifest.attributes([
+            "Specification-Title": "${rootProject.name}",
+            "Specification-Vendor": "ZekerZhayard",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"ZekerZhayard",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             "FMLCorePlugin": "${project.group}.${rootProject.name.toLowerCase(Locale.ENGLISH)}.asm.FMLLoadingPlugin",
             "FMLCorePluginContainsFMLMod": "true",
             "ForceLoadAsMod": "true",

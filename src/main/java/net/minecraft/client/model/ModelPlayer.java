@@ -2,11 +2,12 @@ package net.minecraft.client.model;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.CompatibilityLayerForCustomSkinLoader;
 import net.minecraft.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class ModelPlayer extends ModelBiped
+public class ModelPlayer extends api.player.model.ModelPlayer
 {
     public ModelRenderer /* bipedLeftArmwear */ field_178734_a;
     public ModelRenderer /* bipedRightArmwear */ field_178732_b;
@@ -74,6 +75,7 @@ public class ModelPlayer extends ModelBiped
         super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         GL11.glPushMatrix();
 
+        if (!CompatibilityLayerForCustomSkinLoader.hasRenderPlayerAPI)
         if (this.isChild)
         {
             float f = 2.0F;
@@ -99,7 +101,8 @@ public class ModelPlayer extends ModelBiped
             this.field_178730_v.render(scale);
         }
 
-        if (this.field_178735_y) {
+        if (this.field_178735_y)
+        {
             this.bipedRightArm.rotationPointX += 1.0F;
         }
 

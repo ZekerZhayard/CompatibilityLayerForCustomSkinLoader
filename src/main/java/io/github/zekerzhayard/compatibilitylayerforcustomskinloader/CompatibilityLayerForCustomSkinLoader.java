@@ -18,12 +18,21 @@ public class CompatibilityLayerForCustomSkinLoader {
 
     private final static Logger LOGGER = LogManager.getLogger(MODID);
 
+    public static boolean hasRenderPlayerAPI = false;
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         try {
             Class.forName("customskinloader.Logger").getMethod("info", String.class).invoke(Class.forName("customskinloader.CustomSkinLoader").getField("logger").get(null), MODID + " Version: " + VERSION);
         } catch (Throwable t) {
             LOGGER.info("No CustomSkinLoader detected!", t);
+        }
+
+        try {
+            Class.forName("api.player.forge.RenderPlayerAPIPlugin");
+            hasRenderPlayerAPI = true;
+        } catch (Throwable t) {
+            LOGGER.info("No RenderPlayerAPI detected!");
         }
     }
 }
