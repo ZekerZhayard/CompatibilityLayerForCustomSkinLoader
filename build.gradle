@@ -54,8 +54,8 @@ minecraft {
     mappings = "stable_12"
     runDir = "run"
 
-    replace "@VERSION@", project.version
-    replace "@MODID@", project.name
+    replace "@VERSION@", "${-> project.version}".toString()
+    replace "@MODID@", "${-> project.name}".toString()
 }
 
 //mixin {
