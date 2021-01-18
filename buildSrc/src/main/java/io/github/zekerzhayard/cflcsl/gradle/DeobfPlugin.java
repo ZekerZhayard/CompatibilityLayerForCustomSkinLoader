@@ -59,8 +59,8 @@ public class DeobfPlugin implements Plugin<Project> {
             ProcessJarTask task = (ProcessJarTask) p.task(ImmutableMap.of("type", ProcessJarTask.class), "reobfMod_" + new Random().nextInt());
             task.setInJar(new DelayedFile(artifact.getFile()));
             task.setOutCleanJar(new DelayedFile(deobfFile));
-            task.setExceptorCfg(new DelayedFile(p, Constants.MCP_DATA_DIR + "srgs/srg.exc", basePlugin));
-            task.setSrg(new DelayedFile(p, Constants.MCP_DATA_DIR + "srgs/srg-mcp.srg", basePlugin));
+            task.setExceptorCfg(new DelayedFile(p, "{BUILD_DIR}/tmp/srg.exc", basePlugin));
+            task.setSrg(new DelayedFile(p, "{BUILD_DIR}/tmp/srg2mcp.srg", basePlugin));
             task.dependsOn("genSrgs");
             task.execute();
 
