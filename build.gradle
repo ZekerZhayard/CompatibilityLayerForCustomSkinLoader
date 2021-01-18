@@ -23,6 +23,7 @@ buildscript {
 
 apply plugin: "forge"
 apply plugin: "com.matthewprenger.cursegradle"
+apply plugin: io.github.zekerzhayard.cflcsl.gradle.DeobfPlugin
 //apply plugin: "org.spongepowered.mixin"
 
 version = "${mod_version}${-> getVersionSuffix()}"
@@ -36,12 +37,6 @@ static String getVersionSuffix() {
         return "-build." + System.getenv("GITHUB_RUN_NUMBER") + "-" + System.getenv("GITHUB_SHA").substring(0, 7)
     }
     return "-LOCAL"
-}
-
-configurations {
-    provided {
-        compile.extendsFrom provided
-    }
 }
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -73,7 +68,7 @@ repositories {
     }
     ivy {
         layout "pattern", {
-            artifact "[organisation]/[artifact]-[revision](.[ext])"
+            artifact "[organisation]/[artifact]-[revision](-[classifier])(.[ext])"
         }
         url = "https://csl.littleservice.cn/"
     }
@@ -93,9 +88,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     compile "com.mojang:authlib:1.5.21"
-    compile "mods:CustomSkinLoader_Forge:14.13-SNAPSHOT-203"
+    deobfCompile "mods:CustomSkinLoader_Forge:14.13-SNAPSHOT-214"
+    deobfCompile "curse.maven:openmodslib-228815:2765573"
 
-    provided "curse.maven:render-player-api-228981:2248933"
+    deobfProvided "curse.maven:render-player-api-228981:2248933"
     provided "org.spongepowered:mixin:0.7.11-SNAPSHOT", {
         transitive = false
     }
@@ -105,6 +101,9 @@ def refMap = "${tasks.compileJava.temporaryDir}" + File.separator + "mixins.${ro
 
 jar {
     from configurations.provided.asFileTree.files.collect {
+        zipTree(it)
+    }
+    from configurations.deobfProvided.asFileTree.files.collect {
         zipTree(it)
     }
     from refMap

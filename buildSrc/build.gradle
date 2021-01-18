@@ -1,0 +1,16 @@
+
+apply plugin: "java"
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "forge"
+        url = "https://files.minecraftforge.net/maven"
+    }
+}
+
+dependencies {
+    //compile "net.md-5:SpecialSource:1.8.6"
+    compile "org.apache.commons:commons-lang3:3.3.2"
+    compile "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+}

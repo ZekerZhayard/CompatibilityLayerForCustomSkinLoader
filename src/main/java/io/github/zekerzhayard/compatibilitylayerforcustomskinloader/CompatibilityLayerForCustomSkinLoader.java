@@ -1,5 +1,6 @@
 package io.github.zekerzhayard.compatibilitylayerforcustomskinloader;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import org.apache.logging.log4j.LogManager;
@@ -28,10 +29,8 @@ public class CompatibilityLayerForCustomSkinLoader {
             LOGGER.info("No CustomSkinLoader detected!", t);
         }
 
-        try {
-            Class.forName("api.player.forge.RenderPlayerAPIPlugin");
-            hasRenderPlayerAPI = true;
-        } catch (Throwable t) {
+        hasRenderPlayerAPI = Loader.isModLoaded("RenderPlayerAPI");
+        if (!hasRenderPlayerAPI) {
             LOGGER.info("No RenderPlayerAPI detected!");
         }
     }
