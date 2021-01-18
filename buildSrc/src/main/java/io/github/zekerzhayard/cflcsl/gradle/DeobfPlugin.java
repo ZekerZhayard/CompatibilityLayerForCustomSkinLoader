@@ -60,7 +60,13 @@ public class DeobfPlugin implements Plugin<Project> {
             task.setInJar(new DelayedFile(artifact.getFile()));
             task.setOutCleanJar(new DelayedFile(deobfFile));
             task.setExceptorCfg(new DelayedFile(p, Constants.MCP_DATA_DIR + "srgs/srg.exc", basePlugin));
-            task.setSrg(new DelayedFile(p, Constants.MCP_DATA_DIR + "srgs/srg-mcp.srg", basePlugin));
+            DelayedFile srgFile = new DelayedFile(p, Constants.MCP_DATA_DIR + "srgs/srg-mcp.srg", basePlugin);
+            if (!srgFile.resolveDelayed().exists()) {
+                // srg-mcp.srg may not exist when setupCIWorkspace at first time.
+                return;
+            }
+
+            task.setSrg(srgFile);
             try {
                 task.doTask();
             } catch (IOException e) {
