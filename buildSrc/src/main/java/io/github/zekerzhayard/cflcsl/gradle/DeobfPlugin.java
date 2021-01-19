@@ -1,17 +1,15 @@
 package io.github.zekerzhayard.cflcsl.gradle;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.gradle.common.BasePlugin;
-import net.minecraftforge.gradle.common.Constants;
 import net.minecraftforge.gradle.delayed.DelayedFile;
 import net.minecraftforge.gradle.tasks.ProcessJarTask;
+import net.minecraftforge.gradle.user.UserConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
@@ -56,11 +54,12 @@ public class DeobfPlugin implements Plugin<Project> {
 
             File deobfFile = new File(p.getProjectDir(), ".gradle/remap-repo/deobf/" + group.replace('.', '/') + "/" + name + "/" + version + "/" + name + "-" + version + (StringUtils.isBlank(classifier) ? "" : "-" + classifier) + (StringUtils.isBlank(extension) ? ".jar" : "." + extension));
             deobfFile.getParentFile().mkdirs();
-            ProcessJarTask task = (ProcessJarTask) p.task(ImmutableMap.of("type", ProcessJarTask.class), "reobfMod_" + new Random().nextInt());
+            ProcessJarTask task = (ProcessJarTask) p.task(ImmutableMap.of("type", ProcessJarTask.class), "reobfMod_" + artifact.hashCode());
             task.setInJar(new DelayedFile(artifact.getFile()));
             task.setOutCleanJar(new DelayedFile(deobfFile));
-            task.setExceptorCfg(new DelayedFile(p, "{BUILD_DIR}/tmp/srg.exc", basePlugin));
-            task.setSrg(new DelayedFile(p, "{BUILD_DIR}/tmp/srg2mcp.srg", basePlugin));
+            task.setExceptorCfg(new DelayedFile(p, UserConstants.EXC_SRG, basePlugin));
+            task.setExceptorJson(new DelayedFile(p, "{USER_DEV}/conf/exceptor.json", basePlugin));
+            task.setSrg(new DelayedFile(p, UserConstants.DEOBF_SRG_MCP_SRG, basePlugin));
             task.dependsOn("genSrgs");
             task.execute();
 
