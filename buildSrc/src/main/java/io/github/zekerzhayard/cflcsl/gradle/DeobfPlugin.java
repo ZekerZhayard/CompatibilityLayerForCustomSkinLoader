@@ -43,7 +43,7 @@ public class DeobfPlugin implements Plugin<Project> {
 
         project.afterEvaluate(p -> {
             for (String name : CONFIG.keySet()) {
-                this.resolveArtifact(project.getConfigurations().getByName(name), p);
+                this.resolveArtifact(p.getConfigurations().getByName(name), p);
             }
         });
     }
@@ -59,7 +59,7 @@ public class DeobfPlugin implements Plugin<Project> {
 
             File deobfFile = new File(p.getProjectDir(), ".gradle/remap-repo/deobf/" + group.replace('.', '/') + "/" + name + "/" + version + "/" + name + "-" + version + (StringUtils.isBlank(classifier) ? "" : "-" + classifier) + (StringUtils.isBlank(extension) ? ".jar" : "." + extension));
             deobfFile.getParentFile().mkdirs();
-            ProcessJarTask task = (ProcessJarTask) p.task(ImmutableMap.of("type", ProcessJarTask.class), "reobfMod_" + artifact.hashCode());
+            ProcessJarTask task = (ProcessJarTask) p.task(ImmutableMap.of("type", ProcessJarTask.class), "deobfMod_" + String.format("%08x", artifact.hashCode()));
             task.setInJar(new DelayedFile(artifact.getFile()));
             task.setOutCleanJar(new DelayedFile(deobfFile));
             task.setExceptorCfg(new DelayedFile(p, UserConstants.EXC_SRG, basePlugin));
@@ -79,6 +79,9 @@ public class DeobfPlugin implements Plugin<Project> {
                 for (ContextAwareTaskAction action : ect.getTaskActions()) {
                     action.execute(ect);
                 }
+
+                ExtractConfigTask emd = (ExtractConfigTask) p.getTasks().getByName("extractMcpData");
+                emd.doTask();
 
                 ((GenSrgTask) p.getTasks().getByName("genSrgs")).doTask();
 
