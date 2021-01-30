@@ -44,7 +44,13 @@ public class FMLLoadingPlugin implements IFMLLoadingPlugin {
             MethodHandles.Lookup implLookup = (MethodHandles.Lookup) implLookupField.get(null);
 
             Class<?> fmlPluginWrapperClass = Class.forName("cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper");
-            Class<?> openModsCorePluginClass = Class.forName("openmods.core.OpenModsCorePlugin");
+            Class<?> openModsCorePluginClass;
+            try {
+                openModsCorePluginClass = Class.forName("openmods.core.OpenModsCorePlugin");
+            } catch (ClassNotFoundException cnfe) {
+                // OpenModsLib does not exist.
+                return;
+            }
             MethodHandle coreModInstanceGetter = implLookup.findGetter(fmlPluginWrapperClass, "coreModInstance", IFMLLoadingPlugin.class);
             for (ITweaker tweaker : (List<ITweaker>) Launch.blackboard.get("Tweaks")) {
                 if (fmlPluginWrapperClass.isInstance(tweaker) && openModsCorePluginClass.isInstance(coreModInstanceGetter.invokeWithArguments(tweaker))) {
