@@ -14,7 +14,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: '8.0.275'
+          java-version: '8.0.292'
           architecture: x64
       - name: Set up CI workspace
         run: ./gradlew.bat setupCIWorkspace -iS

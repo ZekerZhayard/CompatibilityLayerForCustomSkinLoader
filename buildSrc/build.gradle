@@ -4,8 +4,12 @@ apply plugin: "java"
 repositories {
     mavenCentral()
     maven {
+        name = "covertdragon"
+        url = "https://maven.covertdragon.team/repository/internal"
+    }
+    maven {
         name = "forge"
-        url = "https://files.minecraftforge.net/maven"
+        url = "https://maven.minecraftforge.net"
     }
 }
 
