@@ -1,5 +1,6 @@
 package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm;
 
+import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.LazyTweaker;
+import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.ModDiscoverer;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.OpenModsCorePluginWrapper;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
@@ -36,6 +38,10 @@ public class FMLLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     @SuppressWarnings("unchecked")
     public void injectData(Map<String, Object> data) {
+        if ((boolean) data.get("runtimeDeobfuscationEnabled")) {
+            ModDiscoverer.scanMods((File) data.get("mcLocation"));
+        }
+
         try {
             // OpenModsLib references minecraft classes at pre initialization phase, that is too bad.
             // We should check it and postpone the timing of it being called.

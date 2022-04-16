@@ -2,7 +2,7 @@ package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.risk
 
 import java.awt.image.BufferedImage;
 
-import org.spongepowered.asm.lib.Opcodes;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;

@@ -6,7 +6,6 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.SoftOverride;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class MixinAbstractClientPlayer implements IMixinAbstractClientPlayer {
@@ -23,7 +22,6 @@ public abstract class MixinAbstractClientPlayer implements IMixinAbstractClientP
         return this.skinType;
     }
 
-    @SoftOverride
     public void /* skinAvailable */ func_180521_a(MinecraftProfileTexture.Type typeIn, ResourceLocation location, MinecraftProfileTexture profileTexture) {
         switch (typeIn) {
             case SKIN: {

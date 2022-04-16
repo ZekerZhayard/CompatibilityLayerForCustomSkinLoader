@@ -4,6 +4,8 @@
   "package": "io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins",
   "client": [
     "mmmlibx.lib.MixinFileManager",
+    "net.gobbob.mobends.client.model.entity.MixinModelBendsPlayer",
+    "net.gobbob.mobends.client.renderer.entity.MixinRenderBendsPlayer",
     "net.minecraft.client.entity.MixinAbstractClientPlayer",
     "net.minecraft.client.entity.MixinRenderManager",
     "net.minecraft.client.entity.MixinRenderPlayer",

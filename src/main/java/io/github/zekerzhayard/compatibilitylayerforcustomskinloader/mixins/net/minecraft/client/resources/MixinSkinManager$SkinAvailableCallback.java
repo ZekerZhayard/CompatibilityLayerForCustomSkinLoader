@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(SkinManager.SkinAvailableCallback.class)
 public interface MixinSkinManager$SkinAvailableCallback {
     @Shadow
+    @SuppressWarnings("target")
     void onSkinAvailable(MinecraftProfileTexture.Type skinPart, ResourceLocation skinLoc);
 
     default void /* skinAvailable */ func_180521_a(MinecraftProfileTexture.Type typeIn, ResourceLocation location, MinecraftProfileTexture profileTexture) {

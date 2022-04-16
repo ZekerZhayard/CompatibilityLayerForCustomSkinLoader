@@ -3,8 +3,10 @@ package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.net.
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import cpw.mods.fml.common.Loader;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.imixins.net.minecraft.client.entity.IMixinAbstractClientPlayer;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.imixins.net.minecraft.client.entity.IMixinRenderPlayer;
+import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.modcompat.mobends.RenderBendsPlayerUtil;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -26,11 +28,13 @@ public abstract class MixinRenderManager {
         at = @At("RETURN")
     )
     private void inject$_init_$0(CallbackInfo ci) {
-        this.field_178637_m = new RenderPlayer();
+        boolean mobendsLoaded = Loader.isModLoaded("mobends");
+
+        this.field_178637_m = mobendsLoaded ? RenderBendsPlayerUtil.createRenderBendsPlayer() : new RenderPlayer();
         ((IMixinRenderPlayer) this.field_178637_m).setModelOnInit((RenderManager) (Object) this, false);
         this.field_178636_l.put("default", this.field_178637_m);
 
-        RenderPlayer renderPlayer = new RenderPlayer();
+        RenderPlayer renderPlayer = mobendsLoaded ? RenderBendsPlayerUtil.createRenderBendsPlayer() : new RenderPlayer();
         ((IMixinRenderPlayer) renderPlayer).setModelOnInit((RenderManager) (Object) this, true);
         this.field_178636_l.put("slim", renderPlayer);
     }
