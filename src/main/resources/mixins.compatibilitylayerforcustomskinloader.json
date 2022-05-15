@@ -7,9 +7,10 @@
     "net.gobbob.mobends.client.model.entity.MixinModelBendsPlayer",
     "net.gobbob.mobends.client.renderer.entity.MixinRenderBendsPlayer",
     "net.minecraft.client.entity.MixinAbstractClientPlayer",
-    "net.minecraft.client.entity.MixinRenderManager",
-    "net.minecraft.client.entity.MixinRenderPlayer",
-    "net.minecraft.client.resources.MixinSkinManager$SkinAvailableCallback"
+    "net.minecraft.client.renderer.entity.MixinRenderManager",
+    "net.minecraft.client.renderer.entity.MixinRenderPlayer",
+    "net.minecraft.client.resources.MixinSkinManager$SkinAvailableCallback",
+    "twilightforest.client.renderer.entity.MixinRenderTFGiant"
   ],
   "refmap": "mixins.compatibilitylayerforcustomskinloader.refmap.json"
 }

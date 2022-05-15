@@ -5,7 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 
 @SideOnly(Side.CLIENT)
-public class ModelPlayer extends api.player.model.ModelPlayer
+public class ModelPlayer extends ModelBiped
 {
     public ModelRenderer /* bipedLeftArmwear */ field_178734_a;
     public ModelRenderer /* bipedRightArmwear */ field_178732_b;

@@ -58,6 +58,9 @@ minecraft {
 
     replace "@VERSION@", "${-> project.version}".toString()
     replace "@MODID@", "${-> project.name}".toString()
+    if (System.getProperty("idea.active") == null) {
+        replace "//@@//", ""
+    }
 }
 
 //mixin {
@@ -104,27 +107,14 @@ dependencies {
     deobfCompileOnly "curse.maven:littlemaidmobx-221976:2273490"
     deobfCompileOnly extract.extract("curse.maven:mo-bends-231347:2242799", "MoBends-0.20.1 for MC 1.7.10.jar")
     deobfCompileOnly "curse.maven:openmodslib-228815:2765573"
-
-    deobfProvided "curse.maven:render-player-api-228981:2248933"
-
+    deobfCompileOnly "curse.maven:render-player-api-228981:2248933"
+    deobfCompile "curse.maven:the-twilight-forest-227639:3039937"
 }
 
 def refMap = "${tasks.compileJava.temporaryDir}" + File.separator + "mixins.${rootProject.name.toLowerCase(Locale.ENGLISH)}.refmap.json"
 
 jar {
-    from configurations.deobfProvided.asFileTree.files.collect {
-        zipTree(it)
-    }
     from refMap
-
-    exclude {
-        it.path.startsWith("api/player/") && !it.path.equals("api/player/model/ModelPlayer.class")
-    }
-    exclude {
-        it.path.toString().toUpperCase Locale.ENGLISH startsWith "LICENSE"
-    }
-    exclude "META-INF/*.RSA"
-    exclude "META-INF/*.SF"
 
     manifest.attributes([
             "Specification-Title": "${rootProject.name}",

@@ -13,10 +13,20 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(RenderBendsPlayer.class)
 public abstract class MixinRenderBendsPlayer extends RenderPlayer {
     @Redirect(
-        method = {
-            "Lnet/gobbob/mobends/client/renderer/entity/RenderBendsPlayer;<init>()V",
-            "Lnet/gobbob/mobends/client/renderer/entity/RenderBendsPlayer;doRender(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V"
-        },
+        method = "Lnet/gobbob/mobends/client/renderer/entity/RenderBendsPlayer;<init>()V",
+        at = @At(
+            value = "NEW",
+            target = "(F)Lnet/gobbob/mobends/client/model/entity/ModelBendsPlayer;",
+            ordinal = 0
+        ),
+        remap = false
+    )
+    private ModelBendsPlayer redirect$_init_$0(float modelSize) {
+        return this.redirect$doRender$0(modelSize);
+    }
+
+    @Redirect(
+        method = "Lnet/gobbob/mobends/client/renderer/entity/RenderBendsPlayer;doRender(Lnet/minecraft/client/entity/AbstractClientPlayer;DDDFF)V",
         at = @At(
             value = "NEW",
             target = "(F)Lnet/gobbob/mobends/client/model/entity/ModelBendsPlayer;",
@@ -24,7 +34,7 @@ public abstract class MixinRenderBendsPlayer extends RenderPlayer {
             remap = false
         )
     )
-    private ModelBendsPlayer redirect$_init_$0(float modelSize) {
+    private ModelBendsPlayer redirect$doRender$0(float modelSize) {
         return (ModelBendsPlayer) RenderBendsPlayerUtil.createModelBendsPlayer(this.mainModel instanceof ModelBendsPlayerCompat && ((ModelBendsPlayerCompat) this.mainModel).isSmallArms);
     }
 

@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.LazyTweaker;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.ModDiscoverer;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.OpenModsCorePluginWrapper;
+import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.RenderPlayerAPITransformer;
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 
@@ -22,6 +23,12 @@ import net.minecraft.launchwrapper.Launch;
 public class FMLLoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
+        try {
+            Class.forName("api.player.forge.RenderPlayerAPIPlugin");
+            return new String[] { RenderPlayerAPITransformer.class.getName() };
+        } catch (Throwable ignored) {
+
+        }
         return null;
     }
 

@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(SkinManager.SkinAvailableCallback.class)
 public interface MixinSkinManager$SkinAvailableCallback {
-    @Shadow
+    //@@// @Shadow
     @SuppressWarnings("target")
     void onSkinAvailable(MinecraftProfileTexture.Type skinPart, ResourceLocation skinLoc);
 

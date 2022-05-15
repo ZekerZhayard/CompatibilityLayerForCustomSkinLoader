@@ -1,4 +1,4 @@
-package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.net.minecraft.client.entity;
+package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.net.minecraft.client.renderer.entity;
 
 import cpw.mods.fml.common.Loader;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.imixins.net.minecraft.client.entity.IMixinRenderPlayer;
@@ -12,9 +12,12 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(RenderPlayer.class)
+@SuppressWarnings("target")
 public abstract class MixinRenderPlayer extends RendererLivingEntity implements IMixinRenderPlayer {
     @Shadow
     public ModelBiped modelBipedMain;
@@ -33,6 +36,23 @@ public abstract class MixinRenderPlayer extends RendererLivingEntity implements 
     )
     private static ModelBiped redirect$_init_$0(float modelSize) {
         return Loader.isModLoaded("mobends") ? RenderBendsPlayerUtil.createModelBendsPlayer(false) : new ModelPlayer(modelSize, false);
+    }
+
+    @ModifyConstant(
+        method = "Lnet/minecraft/client/renderer/entity/RenderPlayer;localRenderSpecials(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V", // RenderPlayerAPI
+        constant = @Constant(floatValue = 1.0625F),
+        remap = false
+    )
+    private float modifyConstant$localRenderSpecials$0(float scale) {
+        return this.modifyConstant$renderEquippedItems$0(scale);
+    }
+
+    @ModifyConstant(
+        method = "Lnet/minecraft/client/renderer/entity/RenderPlayer;renderEquippedItems(Lnet/minecraft/client/entity/AbstractClientPlayer;F)V",
+        constant = @Constant(floatValue = 1.0625F)
+    )
+    private float modifyConstant$renderEquippedItems$0(float scale) {
+        return 1.1875F;
     }
 
     @Override

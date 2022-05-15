@@ -1,4 +1,4 @@
-package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.net.minecraft.client.entity;
+package io.github.zekerzhayard.compatibilitylayerforcustomskinloader.mixins.net.minecraft.client.renderer.entity;
 
 import java.util.Map;
 
