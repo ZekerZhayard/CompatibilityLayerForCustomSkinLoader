@@ -7,7 +7,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
+import cpw.mods.fml.relauncher.CoreModManager;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.CoFHTransformerWrapper;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.LazyTweaker;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.ModDiscoverer;
 import io.github.zekerzhayard.compatibilitylayerforcustomskinloader.asm.modcompat.OpenModsCorePluginWrapper;
@@ -50,6 +52,21 @@ public class FMLLoadingPlugin implements IFMLLoadingPlugin {
         }
 
         try {
+            // CoFH used a very stupid way to determine the current ClassLoader,
+            // which caused it to be poorly compatible with Mixins,
+            // and we had to fix it in a stupid way.
+            try {
+                Class.forName("cofh.asm.LoadingPlugin", false, Launch.classLoader);
+                List<String> accessTransformers = CoreModManager.getAccessTransformers();
+                for (int i = accessTransformers.size() - 1; i >= 0; i--) {
+                    if (accessTransformers.get(i).equals("cofh.asm.CoFHAccessTransformer")) {
+                        accessTransformers.set(i, CoFHTransformerWrapper.class.getName());
+                    }
+                }
+            } catch (ClassNotFoundException ignored) {
+                // CoFH does not exist.
+            }
+
             // OpenModsLib references minecraft classes at pre initialization phase, that is too bad.
             // We should check it and postpone the timing of it being called.
             Field implLookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
@@ -57,19 +74,17 @@ public class FMLLoadingPlugin implements IFMLLoadingPlugin {
             MethodHandles.Lookup implLookup = (MethodHandles.Lookup) implLookupField.get(null);
 
             Class<?> fmlPluginWrapperClass = Class.forName("cpw.mods.fml.relauncher.CoreModManager$FMLPluginWrapper");
-            Class<?> openModsCorePluginClass;
             try {
-                openModsCorePluginClass = Class.forName("openmods.core.OpenModsCorePlugin");
-            } catch (ClassNotFoundException cnfe) {
-                // OpenModsLib does not exist.
-                return;
-            }
-            MethodHandle coreModInstanceGetter = implLookup.findGetter(fmlPluginWrapperClass, "coreModInstance", IFMLLoadingPlugin.class);
-            for (ITweaker tweaker : (List<ITweaker>) Launch.blackboard.get("Tweaks")) {
-                if (fmlPluginWrapperClass.isInstance(tweaker) && openModsCorePluginClass.isInstance(coreModInstanceGetter.invokeWithArguments(tweaker))) {
-                    implLookup.findSetter(fmlPluginWrapperClass, "coreModInstance", IFMLLoadingPlugin.class).invokeWithArguments(tweaker, new OpenModsCorePluginWrapper());
-                    ((List<String>) Launch.blackboard.get("TweakClasses")).add(LazyTweaker.class.getName());
+                Class<?> openModsCorePluginClass = Class.forName("openmods.core.OpenModsCorePlugin");
+                MethodHandle coreModInstanceGetter = implLookup.findGetter(fmlPluginWrapperClass, "coreModInstance", IFMLLoadingPlugin.class);
+                for (ITweaker tweaker : (List<ITweaker>) Launch.blackboard.get("Tweaks")) {
+                    if (fmlPluginWrapperClass.isInstance(tweaker) && openModsCorePluginClass.isInstance(coreModInstanceGetter.invokeWithArguments(tweaker))) {
+                        implLookup.findSetter(fmlPluginWrapperClass, "coreModInstance", IFMLLoadingPlugin.class).invokeWithArguments(tweaker, new OpenModsCorePluginWrapper());
+                        ((List<String>) Launch.blackboard.get("TweakClasses")).add(LazyTweaker.class.getName());
+                    }
                 }
+            } catch (ClassNotFoundException ignored) {
+                // OpenModsLib does not exist.
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);

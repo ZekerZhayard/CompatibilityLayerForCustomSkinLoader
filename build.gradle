@@ -104,11 +104,12 @@ dependencies {
     }
     deobfCompile "mods:CustomSkinLoader_ForgeLegacy:14.14-SNAPSHOT-321"
     deobfCompileOnly "curse.maven:armourers-workshop-229523:3005075"
+    deobfCompileOnly "curse.maven:cofh-core-69162:2388750"
     deobfCompileOnly "curse.maven:littlemaidmobx-221976:2273490"
     deobfCompileOnly extract.extract("curse.maven:mo-bends-231347:2242799", "MoBends-0.20.1 for MC 1.7.10.jar")
     deobfCompileOnly "curse.maven:openmodslib-228815:2765573"
     deobfCompileOnly "curse.maven:render-player-api-228981:2248933"
-    deobfCompile "curse.maven:the-twilight-forest-227639:3039937"
+    deobfCompileOnly "curse.maven:the-twilight-forest-227639:3039937"
 }
 
 def refMap = "${tasks.compileJava.temporaryDir}" + File.separator + "mixins.${rootProject.name.toLowerCase(Locale.ENGLISH)}.refmap.json"
